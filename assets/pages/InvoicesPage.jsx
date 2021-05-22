@@ -41,6 +41,7 @@ const InvoicesPage = (props) => {
         fetchInvoices();
     }, []);
 
+    //gestion du format de date
     const formatDate = (str) => moment(str).format('DD/MM/YYYY');
 
     // gestion du chargement de la page 

@@ -38,7 +38,7 @@ class CurrentUserExtension implements QueryCollectionExtensionInterface, QueryIt
         ) {
             $rootAlias = $queryBuilder->getRootAliases()[0];
             
-            if($rootAlias === Customer::class){
+            if($resourceClass === Customer::class){
                 $queryBuilder->andWhere("$rootAlias.user = :user");
             } else if($resourceClass === Invoice::class){
                 $queryBuilder->join("$rootAlias.customer", "c")
