@@ -1,0 +1,169 @@
+import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom';
+import Field from '../components/forms/Field';
+import Select from '../components/forms/Select';
+import CustomersAPI from '../services/CustomersAPI';
+import axios from "axios";
+
+const InvoicePage = ({ history, match }) => {
+
+    //12. 
+    const { id = "new" } = match.params;
+
+    //3
+    const [invoice, setInvoice] = useState({
+        amount:"",
+        customer:"",
+        status:"SENT"
+    });
+
+    //3
+    const [errors, setErrors] = useState({
+        amount:"",
+        customer:"",
+        status:""
+    })
+
+    //6. 
+    const [customers, setCustomers] = useState([]);
+    const [editing, setEditing] = useState(false);
+
+    //5. recuper les donnnes puis je charge
+    const fetchCustomers = async () => {
+        try {
+            const data = await CustomersAPI.findAll();
+            //7.
+            setCustomers(data); 
+            //11
+            if (!invoice.customer) setInvoice({...invoice, customer: data[0].id })
+        } catch (err) {
+            console.log(err.response);
+        }
+    }
+
+     // Gestion des changements des inputs dans le formulaire N°4
+    const handleChange = ({ currentTarget }) => {
+        const {name, value} = currentTarget;
+        setInvoice({ ...invoice, [name]: value });
+    }
+
+    const fetchInvoice = async id => {
+        try {
+            const data = await axios
+                .get("http://localhost:8000/api/invoices/" + id)
+                .then(response => response.data);
+
+            
+            const { amount, customer, status } = data;
+           
+            setInvoice({ amount, status, customer: customer.id }); 
+            console.log(invoice);
+
+        }catch (error) {
+            console.log(error.response);
+        }
+    }
+    
+    useEffect(() => {
+        fetchCustomers();
+    }, []); 
+
+    useEffect(() => {
+        if(id !== "new") {
+            setEditing(true);
+            fetchInvoice(id);
+        }
+     }, [id]); 
+ 
+
+    //10.
+    const handleSubmit = async event => {
+        event.preventDefault();
+
+        try {
+            if(editing) {
+                const response = await axios.put(
+                    "http://localhost:8000/api/invoices/" + id, 
+                    {...invoice, customer: `/api/customers/${invoice.customer}` }
+                );
+                    //TODO : Flash notification success
+                    console.log(response);
+            }else {
+
+                const response = await axios.post("http://localhost:8000/api/invoices", {
+                    ...invoice, 
+                    customer: `/api/customers/${invoice.customer}`
+                });
+                // TODO: Flash notification succes
+                history.replace("/invoices");
+            }
+        }catch ({ response }) {
+     
+            const { violations } = response.data;
+    
+            if(violations){
+                const apiErrors = {};
+                violations.forEach( ({ propertyPath, message }) => {
+                    apiErrors[propertyPath] = message;
+                });
+    
+                setErrors(apiErrors);
+                // TODO: Flash notification d'erreur
+            }
+        }
+    }
+
+    return ( 
+        <>
+        {/*   2 <></> */ }
+            {editing && <h1>Modification d'une facture</h1> || <h1>Création d'une facture</h1>}
+            {/** 9 */}
+            <form onSubmit={handleSubmit}>
+                <Field 
+                    name="amount" 
+                    type="number" 
+                    placeholder="Montant de la facture" 
+                    label="Montant" 
+                    onChange={handleChange} 
+                    defaultValue={invoice.amount} 
+                    error={errors.amount}
+                 />
+                {/** 4 */}
+                <Select 
+                    name="customer" 
+                    label="Client" 
+                    onChange={handleChange}
+                    defaultValue={invoice.customer} 
+                    error={errors.customer}
+                >
+                    {/** 8 */}
+                    {customers.map(customer => (
+                        <option key={customer.id} value={customer.id}>
+                            {customer.name} {customer.lastName}
+                        </option>)
+                    )}
+                </Select>
+                <Select 
+                    name="status" 
+                    label="Statut" 
+                    onChange={handleChange}
+                    defaultValue={invoice.status} 
+                    error={errors.status} 
+                >
+                    <option value="SENT">Envoyé</option>
+                    <option value="PAID">Payée</option>
+                    <option value="CANCELLED">Annulée</option>
+                </Select>
+                <div className="form-group mt-2">
+                    <button type="submit" className="btn btn-success">
+                     Enregistrer
+                    </button>
+                    <Link to="/invoices" className="btn btn-link"> retour aux factures</Link>
+                </div>
+            </form>
+        
+        </>
+     );
+}
+ 
+export default InvoicePage;
