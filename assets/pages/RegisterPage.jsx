@@ -35,6 +35,7 @@ const RegisterPage = ({ history }) => {
             apiErrors.passwordConfirm =
             "Votre confirmation de mot de passe n'est pas conforme avec le mot de passe original";
             setErrors(apiErrors); 
+            toast.error("des erreurs dans votre formulaire !");
             return;
         }
 
@@ -43,7 +44,7 @@ const RegisterPage = ({ history }) => {
 
             await UsersAPI.register(user)
             setErrors({})
-            //TODO: Flash notification succes succès
+            toast.success("Vous êtes désormais inscrit, vous pouvez vous connecter !");
             history.replace('/login')
 
         } catch(error) {
@@ -55,8 +56,7 @@ const RegisterPage = ({ history }) => {
 
                 setErrors(apiErrors);
             }
-
-            //TODO: Flash notification erreur
+            toast.error("des erreurs dans votre formulaire !");
         }
 
        
