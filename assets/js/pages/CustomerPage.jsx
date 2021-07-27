@@ -128,7 +128,7 @@ const CustomerPage = ({ match, history }) => {
                         error={errors.company}
                 />
 
-                <div className="form-group mt-2">
+                <div className="form-group mt-2 mb-4">
                     <button type="submit" className="btn btn-success">
                         Enregistrer
                     </button>

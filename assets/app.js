@@ -3,18 +3,18 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { HashRouter, Route, Switch, withRouter } from 'react-router-dom';
 import './bootstrap';
-import Navbar from './components/Navbar';
-import CustomersPage from "./pages/CustomersPage";
-import HomePage from "./pages/HomePage";
-import InvoicesPage from './pages/InvoicesPage';
-import LoginPage from './pages/LoginPage'
-import AuthAPI from './services/authAPI';
-import AuthContext from './contexts/AuthContext';
-import PrivateRoute from './components/PrivateRoute';
+import Navbar from './js/components/Navbar';
+import CustomersPage from "./js/pages/CustomersPage";
+import HomePage from "./js/pages/HomePage";
+import InvoicesPage from './js/pages/InvoicesPage';
+import LoginPage from './js/pages/LoginPage'
+import AuthAPI from './js/services/authAPI';
+import AuthContext from './js/contexts/AuthContext';
+import PrivateRoute from './js/components/PrivateRoute';
 import './styles/app.css';
-import CustomerPage from './pages/CustomerPage';
-import InvoicePage from './pages/InvoicePage';
-import RegisterPage from './pages/RegisterPage';
+import CustomerPage from './js/pages/CustomerPage';
+import InvoicePage from './js/pages/InvoicePage';
+import RegisterPage from './js/pages/RegisterPage';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
